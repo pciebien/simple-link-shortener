@@ -133,7 +133,7 @@ namespace lsl
             for (vector<link*>::iterator it = _links->begin(); it != _links->end(); ++it)
                 delete (*it);
             _links->clear();
-            
+
             delete _links;
         }
 
@@ -145,17 +145,17 @@ namespace lsl
 int main()
 {
     environment::env_data *env = new environment::env_data();
-    link_collection *pLinks = new link_collection();
+    link_collection *links = new link_collection();
 
     string shortenedLink;
-    pLinks->add("https://google.com", &shortenedLink);
+    links->add("https://google.com", &shortenedLink);
     
-    string *pOrigins = pLinks->getOrigins();
-    string *pShortenedLinks = pLinks->getShortenedLinks();
+    string *pOrigins = links->getOrigins();
+    string *pShortenedLinks = links->getShortenedLinks();
 
-    for(int i = 0; i < pLinks->count(); ++i)
+    for(int i = 0; i < links->count(); ++i)
         cout << pOrigins[0] << "    " << pShortenedLinks[0] << endl;
     
-    delete env, pLinks, pOrigins, pShortenedLinks;
+    delete env, links, pOrigins, pShortenedLinks;
     return 0;
 }
