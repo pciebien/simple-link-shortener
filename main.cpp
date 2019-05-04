@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cmath>
 
 using namespace std;
 
@@ -19,10 +20,10 @@ private:
 class link
 {
 public:
-    link(string origin)
+    link(string origin, int index)
     {
         _origin = origin;
-        _shortened = shorten(origin);
+        _shortened = shorten(index);
     }
 
     bool originEqual(string link)
@@ -39,9 +40,24 @@ private:
     string _origin;
     string _shortened;
 
-    string shorten(string origin)
+    string shorten(int index)
     {
-        return "";
+        string characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        vector<char> *encodedPartials = new vector<char>();
+
+        while (index > 0)
+        {
+            int val = index % characters.size();
+            encodedPartials->push_back(characters[val]);
+            index = (int)floor(index / (float)characters.size());
+        }
+
+        string encodedIndex = "";
+        for(int i = 0; i < encodedPartials->size(); ++i)
+            encodedIndex += (*encodedPartials)[i];
+
+        delete encodedPartials;
+        return encodedIndex;
     }
 };
 
@@ -65,10 +81,11 @@ private:
 int main()
 {
     env_data *env = new env_data();
-    link_collection *db = new link_collection();
+    link_collection *links = new link_collection();
 
-    cout << env->getDomainName();
+    string l = shorten2(645534234);
+    cout << l;
 
-    delete env, db;
+    delete env, links;
     return 0;
 }
