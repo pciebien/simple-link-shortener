@@ -83,9 +83,6 @@ int main()
     env_data *env = new env_data();
     link_collection *links = new link_collection();
 
-    string l = shorten2(645534234);
-    cout << l;
-
     delete env, links;
     return 0;
 }
