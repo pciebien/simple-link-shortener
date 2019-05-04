@@ -116,6 +116,11 @@ namespace lsl
             return pShortenedLinks;
         }
 
+        int count()
+        {
+            return _links->size();
+        }
+
         void add(string origin, string *shortenedLink)
         {
             (*shortenedLink) = tools::base_converter::encode(_links->size() + 1);
@@ -125,6 +130,10 @@ namespace lsl
 
         ~link_collection()
         {
+            for (vector<link*>::iterator it = _links->begin(); it != _links->end(); ++it)
+                delete (*it);
+            _links->clear();
+            
             delete _links;
         }
 
@@ -136,19 +145,17 @@ namespace lsl
 int main()
 {
     environment::env_data *env = new environment::env_data();
-    link_collection *links = new link_collection();
+    link_collection *pLinks = new link_collection();
 
     string shortenedLink;
-    links->add("https://google.com", &shortenedLink);
+    pLinks->add("https://google.com", &shortenedLink);
     
-    string *pOrigins = links->getOrigins();
-    string *pShortenedLinks = links->getShortenedLinks();
-    
-    for(int i = 0; i < pOrigins->size(); ++i)
-    {
-        cout << (*pOrigins)[i] << "    " << (*pShortenedLinks)[i] << endl;
-    }
+    string *pOrigins = pLinks->getOrigins();
+    string *pShortenedLinks = pLinks->getShortenedLinks();
 
-    delete env, links, pOrigins, pShortenedLinks;
+    for(int i = 0; i < pLinks->count(); ++i)
+        cout << pOrigins[0] << "    " << pShortenedLinks[0] << endl;
+    
+    delete env, pLinks, pOrigins, pShortenedLinks;
     return 0;
 }
