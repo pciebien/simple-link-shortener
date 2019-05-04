@@ -3,84 +3,93 @@
 #include <vector>
 #include <cmath>
 
+namespace lsl {}
+
 using namespace std;
+using namespace lsl;
 
-class env_data 
+namespace environment
 {
-public:
-    string getDomainName(bool dotted = false)
+    class env_data 
     {
-        return dotted ? "." + domain : domain;
-    }
-
-private:
-    const string domain = "sls";
-};
-
-class link
-{
-public:
-    link(string origin, int index)
-    {
-        _origin = origin;
-        _shortened = shorten(index);
-    }
-
-    bool originEqual(string link)
-    {
-        return _origin == link;
-    }
-
-    bool shortenedEqual(string link)
-    {
-        return _shortened == link;
-    }
-
-private:
-    string _origin;
-    string _shortened;
-
-    string shorten(int index)
-    {
-        string characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        vector<char> *encodedPartials = new vector<char>();
-
-        while (index > 0)
+    public:
+        string getDomainName(bool dotted = false)
         {
-            int val = index % characters.size();
-            encodedPartials->push_back(characters[val]);
-            index = (int)floor(index / (float)characters.size());
+            return dotted ? "." + domain : domain;
         }
 
-        string encodedIndex = "";
-        for(int i = 0; i < encodedPartials->size(); ++i)
-            encodedIndex += (*encodedPartials)[i];
+    private:
+        const string domain = "sls";
+    };
+}
 
-        delete encodedPartials;
-        return encodedIndex;
-    }
-};
-
-class link_collection
+namespace lsl
 {
-public:
-    link_collection()
+    class link
     {
-        _links = new vector<link*>();
-    }
-    
-    ~link_collection()
-    {
-        delete _links;
-    }
+    public:
+        link(string origin, int index)
+        {
+            _origin = origin;
+            _shortened = shorten(index);
+        }
 
-private:
-    vector<link*> *_links;
-};
+        bool originEqual(string link)
+        {
+            return _origin == link;
+        }
+
+        bool shortenedEqual(string link)
+        {
+            return _shortened == link;
+        }
+
+    private:
+        string _origin;
+        string _shortened;
+
+        string shorten(int index)
+        {
+            string characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            vector<char> *encodedPartials = new vector<char>();
+
+            while (index > 0)
+            {
+                int val = index % characters.size();
+                encodedPartials->push_back(characters[val]);
+                index = (int)floor(index / (float)characters.size());
+            }
+
+            string encodedIndex = "";
+            for(int i = 0; i < encodedPartials->size(); ++i)
+                encodedIndex += (*encodedPartials)[i];
+
+            delete encodedPartials;
+            return encodedIndex;
+        }
+    };
+
+    class link_collection
+    {
+    public:
+        link_collection()
+        {
+            _links = new vector<link*>();
+        }
+        
+        ~link_collection()
+        {
+            delete _links;
+        }
+
+    private:
+        vector<link*> *_links;
+    };
+}
 
 int main()
 {
-    env_data *env = new env_data();
+    environment::env_data *env = new environment::env_data();
     link_collection *links = new link_collection();
 
     delete env, links;
