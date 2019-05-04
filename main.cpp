@@ -48,7 +48,6 @@ private:
 class link_collection
 {
 public:
-
     link_collection()
     {
         _links = new vector<link*>();
