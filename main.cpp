@@ -20,8 +20,14 @@ namespace environment
             return dotted ? "." + domain : domain;
         }
 
+        string getServiceName(bool dotted = false)
+        {
+            return dotted ? "." + serviceName : serviceName;
+        }
+
     private:
-        const string domain = "sls";
+        const string domain = "lsl";
+        const string serviceName = "simple";
     };
 }
 
@@ -43,7 +49,7 @@ namespace tools
             }
 
             string encodedIndex = "";
-            for(int i = 0; i < encodedPartials->size(); ++i)
+            for(uint8_t i = 0; i < encodedPartials->size(); ++i)
                 encodedIndex += (*encodedPartials)[i];
 
             delete encodedPartials;
@@ -100,7 +106,7 @@ namespace lsl
         {
             string *pOrigins = new string[_links->size()];
 
-            for(int i = 0; i < _links->size(); ++i)
+            for(uint8_t i = 0; i < _links->size(); ++i)
                 pOrigins[i] = (*_links)[i]->getOrigin();
 
             return pOrigins;
@@ -110,7 +116,7 @@ namespace lsl
         {
             string *pShortenedLinks = new string[_links->size()];
 
-            for(int i = 0; i < _links->size(); ++i)
+            for(uint8_t i = 0; i < _links->size(); ++i)
                 pShortenedLinks[i] = (*_links)[i]->getShortened();
 
             return pShortenedLinks;
@@ -121,11 +127,20 @@ namespace lsl
             return _links->size();
         }
 
+        void writeLinks()
+        {
+
+        }
+
         void add(string origin, string *shortenedLink)
         {
-            (*shortenedLink) = tools::base_converter::encode(_links->size() + 1);
+            environment::env_data *env = new environment::env_data();
+            string baseUrl = env->getServiceName() + env->getDomainName(true);
+            (*shortenedLink) = baseUrl + tools::base_converter::encode(_links->size() + 1);
+
             link *pLink = new link(origin, (*shortenedLink)); 
-            _links->push_back(pLink);            
+            _links->push_back(pLink);   
+            delete env;         
         }
 
         ~link_collection()
@@ -157,17 +172,9 @@ namespace test
 
 int main()
 {
-    environment::env_data *env = new environment::env_data();
     link_collection *links = new link_collection();
-
-    test::generateLinks(links, 4835755);    
-
-    string *pOrigins = links->getOrigins();
-    string *pShortenedLinks = links->getShortenedLinks();
-
-    for(int i = 0; i < links->count(); ++i)
-        cout << pOrigins[i] << "    " << pShortenedLinks[i] << endl;
     
-    delete env, links, pOrigins, pShortenedLinks;
+    
+    delete links;
     return 0;
 }
