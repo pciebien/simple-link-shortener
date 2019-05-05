@@ -95,6 +95,7 @@ namespace tools
             delete env, symbols;
             return url;
         }
+
     private:
         static string replace(string base, string from, string to)
         {
@@ -157,6 +158,41 @@ namespace lsl
                 if((*_links)[i]->getOrigin() == original) 
                     return true;
             }
+
+            return false;
+        } 
+
+        bool shortenedExists(string shortened)
+        {
+            for(uint8_t i = 0; i < _links->size(); ++i)
+            {
+                if((*_links)[i]->getShortened() == shortened) 
+                    return true;
+            }
+
+            return false;
+        } 
+
+        string getOriginLink(string shortened)
+        {
+            for(uint8_t i = 0; i < _links->size(); ++i)
+            {
+                if((*_links)[i]->getShortened() == shortened) 
+                    return (*_links)[i]->getOrigin();
+            }
+
+            return "";
+        } 
+
+        string getShortenedLink(string origin)
+        {
+            for(uint8_t i = 0; i < _links->size(); ++i)
+            {
+                if((*_links)[i]->getOrigin() == origin) 
+                    return (*_links)[i]->getShortened();
+            }
+
+            return "";
         } 
 
         string *getOrigins()
@@ -218,19 +254,6 @@ namespace lsl
     };
 }
 
-namespace test
-{
-    void generateLinks(link_collection *links, int linkNumber)
-    {
-        while(linkNumber > 0)
-        {
-            string shortenedLink;
-            links->add("https://example.com", &shortenedLink);
-            --linkNumber;
-        }
-    }
-}
-
 namespace ui
 {
     void drawMenu()
@@ -238,8 +261,10 @@ namespace ui
         cout << endl << endl;
         cout << "1 - show link collection" << endl;
         cout << "2 - add new link" << endl;
-        cout << "3 - exit" << endl;
-        cout << "Choose an action (by number): ";
+        cout << "3 - get shortened by origin" << endl;
+        cout << "4 - get origin by shortened" << endl;
+        cout << "5 - exit" << endl;
+        cout << endl << "Choose an action (by number): ";
     }
 
     void clear()
@@ -271,6 +296,39 @@ namespace menu_bl
         links->add(originLink, &shortenedLink);
         cout << "Added successfully: " << shortenedLink << endl;
     }
+
+    void getShortenedByOrigin(link_collection *links)
+    {
+        string originLink;
+        cout << "Enter origin url: ";
+        cin >> originLink;
+        originLink = tools::url_normalizer::process(originLink);
+
+        if(!links->originalExists(originLink))
+        {
+            cout << "No found" << endl;
+            return;
+        }
+        string shortenedLink = links->getShortenedLink(originLink);
+        cout << "Shortened link: " << shortenedLink << endl;
+    }
+
+    void getOriginByShortened(link_collection *links)
+    {
+        string shortenedLink;
+        cout << "Enter shortened url: ";
+        cin >> shortenedLink;
+        shortenedLink = tools::url_normalizer::process(shortenedLink);
+
+        if(!links->shortenedExists(shortenedLink))
+        {
+            cout << "No found" << endl;
+            return;
+        }
+
+        string originLink = links->getOriginLink(shortenedLink);
+        cout << "Origin link: " << originLink << endl;
+    }
 }
 
 int main()
@@ -293,6 +351,12 @@ int main()
                 menu_bl::addNewLink(links);
                 break;
             case 3:
+                menu_bl::getShortenedByOrigin(links);
+                break;
+            case 4:
+                menu_bl::getOriginByShortened(links);
+                break; 
+            case 5:
                 input = 0;
                 break;
             default:
