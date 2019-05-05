@@ -142,19 +142,31 @@ namespace lsl
     };
 }
 
+namespace test
+{
+    void generateLinks(link_collection *links, int linkNumber)
+    {
+        while(linkNumber > 0)
+        {
+            string shortenedLink;
+            links->add("https://example.com", &shortenedLink);
+            --linkNumber;
+        }
+    }
+}
+
 int main()
 {
     environment::env_data *env = new environment::env_data();
     link_collection *links = new link_collection();
 
-    string shortenedLink;
-    links->add("https://google.com", &shortenedLink);
-    
+    test::generateLinks(links, 4835755);    
+
     string *pOrigins = links->getOrigins();
     string *pShortenedLinks = links->getShortenedLinks();
 
     for(int i = 0; i < links->count(); ++i)
-        cout << pOrigins[0] << "    " << pShortenedLinks[0] << endl;
+        cout << pOrigins[i] << "    " << pShortenedLinks[i] << endl;
     
     delete env, links, pOrigins, pShortenedLinks;
     return 0;
